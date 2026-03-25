@@ -1,68 +1,126 @@
 import streamlit as st
 import pandas as pd
 import os
+import subprocess
 from io import BytesIO
 from datetime import datetime
 
-# 導入你原本的 utils 邏輯
-from utils.update_539 import update_539
-from utils.build_power_table1_latest5 import build_power_table1_latest5
-# (以此類推，導入其他需要執行的 function)
+# 設定網頁標題與圖示
+st.set_page_config(page_title="吉米彩卷分析預測", page_icon="🎰", layout="wide")
 
-st.set_page_config(page_title="吉米彩卷分析預測", page_icon="📈", layout="wide")
+# 自定義 CSS 讓介面更漂亮
+st.markdown("""
+    <style>
+    .main {
+        background-color: #1a1a1a;
+    }
+    .stButton>button {
+        width: 100%;
+        border-radius: 5px;
+        height: 3em;
+        background-color: #ff4b4b;
+        color: white;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
 st.title("🎰 吉米彩卷分析系統 (Cloud版)")
 st.info("朋友你好！這是我開發的分析系統，支持 539、大樂透、威力彩。")
 
 # --- 側邊欄：數據同步 ---
 with st.sidebar:
-    st.header("數據維護")
-    if st.button("🔄 同步最新獎號"):
-        with st.spinner("正在執行爬蟲更新..."):
+    st.header("⚙️ 數據維護")
+    if st.button("🔄 同步最新獎號 (爬蟲)"):
+        with st.spinner("正在執行數據同步..."):
             try:
-                # 執行你寫好的 update 邏輯
-                update_539()
-                st.success("539 更新成功！")
-                # 這裡可以加入 update_649() 等
+                # 這裡調用你原本的 update 腳本
+                subprocess.run(["python", "utils/update_539.py"], check=True)
+                st.success("數據更新成功！")
             except Exception as e:
                 st.error(f"更新失敗: {e}")
 
-# --- 主畫面：預測操作 ---
+# --- 主畫面：分頁標籤 ---
 tabs = st.tabs(["今彩 539", "大樂透 649", "威力彩"])
 
-# 以 539 為例
+# ==========================================
+# 1. 今彩 539 邏輯
+# ==========================================
 with tabs[0]:
     st.subheader("今彩 539 分析預測")
-    test_time = st.slider("預測組數", 1, 20, 5, key="539_slider")
+    test_time_539 = st.slider("預測組數", 1, 20, 5, key="539_slider")
     
-    if st.button("🔮 開始 539 混合權重分析"):
-        with st.spinner("計算中..."):
-            # 按順序執行你的流水線
-            # 1. build tables... 2. predict... 3. hybrid...
-            # 這裡直接模擬輸出最後的結果表
-            predict_path = "data/539/query/539_table3_predict_hybrid_weighted.csv"
-            if os.path.exists(predict_path):
-                df_res = pd.read_csv(predict_path)
-                st.dataframe(df_res.style.highlight_max(axis=0), use_container_width=True)
-                st.balloons()
-            else:
-                st.warning("尚未生成預測資料，請確認後端邏輯已執行。")
+    if st.button("🔮 執行 539 全流程分析", key="btn_539"):
+        with st.spinner("539 數據計算中..."):
+            try:
+                # 依序執行你的流水線
+                subprocess.run(["python", "utils/clean_539.py"], check=True)
+                subprocess.run(["python", "utils/build_539_table1_latest5.py"], check=True)
+                subprocess.run(["python", "utils/build_539_table2_lookup.py"], check=True)
+                subprocess.run(["python", "utils/build_539_weight_table.py"], check=True)
+                subprocess.run(["python", "utils/build_539_table3_predict_hybrid_weighted.py", str(test_time_539)], check=True)
+                
+                res_path = "data/539/query/539_table3_predict_hybrid_weighted.csv"
+                if os.path.exists(res_path):
+                    df_res = pd.read_csv(res_path)
+                    st.success("✅ 539 分析完成！")
+                    st.write("### 🎯 推薦號碼")
+                    st.dataframe(df_res.style.highlight_max(axis=0), use_container_width=True)
+                    st.balloons()
+            except Exception as e:
+                st.error(f"執行出錯：{e}")
 
-    # Excel 下載功能 (解決你 Export 的問題)
-    st.divider()
-    if st.button("📥 下載完整 539 報表 (Excel)"):
-        # 這裡不直接存檔，而是存入記憶體給瀏覽器下載
-        output = BytesIO()
-        with pd.ExcelWriter(output, engine='openpyxl') as writer:
-            # 讀取你的各張表並寫入
-            pd.read_csv("data/539/query/539_table1_latest5.csv").to_excel(writer, sheet_name='Latest5')
-            # ... 寫入其他 sheet
-        st.download_button(
-            label="點我儲存 Excel",
-            data=output.getvalue(),
-            file_name=f"539_report_{datetime.now().strftime('%m%d')}.xlsx",
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        )
+# ==========================================
+# 2. 大樂透 649 邏輯
+# ==========================================
+with tabs[1]:
+    st.subheader("大樂透 649 分析預測")
+    test_time_649 = st.slider("預測組數", 1, 20, 5, key="649_slider")
+    
+    if st.button("🔮 執行大樂透全流程分析", key="btn_649"):
+        with st.spinner("大樂透數據計算中..."):
+            try:
+                subprocess.run(["python", "utils/clean_649.py"], check=True)
+                subprocess.run(["python", "utils/build_649_table1_latest5.py"], check=True)
+                subprocess.run(["python", "utils/build_649_table2_lookup.py"], check=True)
+                subprocess.run(["python", "utils/build_649_weight_table.py"], check=True)
+                subprocess.run(["python", "utils/build_649_table3_predict_hybrid_weighted.py", str(test_time_649)], check=True)
+                
+                res_path = "data/649/query/649_table3_predict_hybrid_weighted.csv"
+                if os.path.exists(res_path):
+                    df_res = pd.read_csv(res_path)
+                    st.success("✅ 大樂透分析完成！")
+                    st.write("### 🎯 推薦號碼")
+                    st.dataframe(df_res.style.highlight_max(axis=0), use_container_width=True)
+                    st.balloons()
+            except Exception as e:
+                st.error(f"執行出錯：{e}")
+
+# ==========================================
+# 3. 威力彩 Power 邏輯
+# ==========================================
+with tabs[2]:
+    st.subheader("威力彩分析預測")
+    test_time_power = st.slider("預測組數", 1, 20, 5, key="power_slider")
+    
+    if st.button("🔮 執行威力彩全流程分析", key="btn_power"):
+        with st.spinner("威力彩數據計算中..."):
+            try:
+                subprocess.run(["python", "utils/clean_power.py"], check=True)
+                subprocess.run(["python", "utils/build_power_table1_latest5.py"], check=True)
+                subprocess.run(["python", "utils/build_power_table2_lookup.py"], check=True)
+                subprocess.run(["python", "utils/build_power_weight_table.py"], check=True)
+                subprocess.run(["python", "utils/build_power_table3_predict_hybrid_weighted.py", str(test_time_power)], check=True)
+                
+                res_path = "data/power/query/power_table3_predict_hybrid_weighted.csv"
+                if os.path.exists(res_path):
+                    df_res = pd.read_csv(res_path)
+                    st.success("✅ 威力彩分析完成！")
+                    st.write("### 🎯 推薦號碼")
+                    st.dataframe(df_res.style.highlight_max(axis=0), use_container_width=True)
+                    st.balloons()
+            except Exception as e:
+                st.error(f"執行出錯：{e}")
 
 # --- 頁尾 ---
+st.divider()
 st.caption("Designed by Gemini吉米 | 僅供學術研究，博弈有風險請謹慎參與。")
