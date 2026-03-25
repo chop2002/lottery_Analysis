@@ -1,0 +1,5 @@
+﻿model,rank,count,avg_hits,hit_ge_2,hit_ge_3
+hybrid_v1,1,1,4.0,1.0,1.0
+hybrid_v1,2,1,1.0,0.0,0.0
+hybrid_v1,3,1,0.0,0.0,0.0
+hybrid_v1,4,1,0.0,0.0,0.0

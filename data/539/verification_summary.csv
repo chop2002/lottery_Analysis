@@ -1,0 +1,2 @@
+﻿model,total_predictions,avg_hits,avg_score,score_hit_corr,rank1_avg_hits,rank2_avg_hits,rank3_avg_hits,hit_ge_1,hit_ge_2,hit_ge_3,hit_ge_4,hit_ge_5
+hybrid_v1,4,1.25,88.975,0.735,4.0,1.0,0.0,0.5,0.25,0.25,0.25,0.0

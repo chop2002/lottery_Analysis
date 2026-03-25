@@ -1,0 +1,15 @@
+﻿show_order,n1,n2,n3,n4,n5,n6,sp
+latest_value,2,6,10,22,40,45,17
+common_1,1,11,21,33,37,49,31
+common_2,2,13,,28,38,48,34
+common_3,4,5,,35,39,46,18
+common_4,,16,,,34,47,
+common_5,,,,,44,,
+weight_only_1,7,21,25,32,,44,21
+weight_only_2,6,,36,31,,,25
+weight_only_3,,,23,,,,
+weight_only_4,,,27,,,,
+freq_only_1,3,12,26,27,,43,3
+freq_only_2,5,,18,41,,,40
+freq_only_3,,,14,,,,
+freq_only_4,,,22,,,,

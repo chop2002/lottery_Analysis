@@ -1,0 +1,3 @@
+﻿predict_date,target_draw_date,lottery,batch_id,model,group_id,rank,score,n1,n2,n3,n4,n5,n6,special_no
+2026-03-20,2026-03-21,649,20260320_649_v1,model_649_a,1,1,93.2,03,11,18,25,37,41,09
+2026-03-20,2026-03-21,649,20260320_649_v1,model_649_a,2,2,88.4,05,12,20,28,33,45,17
