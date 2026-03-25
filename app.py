@@ -118,9 +118,9 @@ with tabs[2]:
                     st.write("### 🎯 推薦號碼")
                     st.dataframe(df_res.style.highlight_max(axis=0), use_container_width=True)
                     st.balloons()
-            except Exception as e:
-                st.error(f"執行出錯：{e}")
-
+                except subprocess.CalledProcessError as e:
+                    st.error(f"執行出錯！這通常是因為缺少原始資料檔。")
+                    st.info("請檢查 GitHub 是否有 data/649/raw/649_raw.csv")
 # --- 頁尾 ---
 st.divider()
 st.caption("Designed by Gemini吉米 | 僅供學術研究，博弈有風險請謹慎參與。")
