@@ -2,4 +2,5 @@ streamlit
 pandas
 openpyxl
 beautifulsoup4
+bs4
 requests
