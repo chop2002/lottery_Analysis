@@ -1,0 +1,13 @@
+﻿show_order,n1,n2,n3,n4,n5,n6,sp
+latest_value,14,26,28,31,32,34,1
+common_1,4,9,12,21,29,38,2
+common_2,2,10,16,22,31,37,5
+common_3,6,,20,29,26,35,4
+common_4,7,,,25,36,36,3
+common_5,,,,,,34,8
+weight_only_1,5,15,25,23,32,,
+weight_only_2,,20,11,,,,
+weight_only_3,,4,,,,,
+freq_only_1,10,7,23,24,33,,
+freq_only_2,,6,26,,,,
+freq_only_3,,13,,,,,
