@@ -23,11 +23,10 @@ with tab1:
     n_539 = st.slider("預測組數", 1, 10, 5, key="s539")
     if st.button("🔮 開始 539 混合權重分析"):
         st.balloons()  # 🎈 祝賀氣球
-        col1, _ = st.columns([0.5, 0.5]) # 調整為 50% 寬度
+        col1, _ = st.columns([0.65, 0.35]) # 佔螢幕 65%
         with col1:
             data_539 = {"n1":[4,4,4,4,4,4,4,4,4,4],"n2":[6,5,1,5,2,6,5,1,5,2],"n3":[4,8,16,16,10,4,8,16,16,10],"n4":[17,29,29,11,22,17,29,29,11,22],"n5":[28,32,31,28,35,28,32,31,28,35]}
             df = pd.DataFrame(data_539).head(n_539)
-            # 優化序號：從 1 開始並加上「第x組」
             df.index = [f"第 {i+1} 組" for i in range(len(df))]
             st.dataframe(df, use_container_width=True)
 
@@ -37,7 +36,7 @@ with tab2:
     n_649 = st.slider("預測組數", 1, 10, 5, key="s649")
     if st.button("🔮 開始 649 混合權重分析"):
         st.balloons()  # 🎈 祝賀氣球
-        col2, _ = st.columns([0.5, 0.5]) # 調整為 50% 寬度
+        col2, _ = st.columns([0.65, 0.35]) # 佔螢幕 65%
         with col2:
             rows_649 = [
                 {"n1": 3, "n2": 11, "n3": 18, "n4": 25, "n5": 37, "n6": 41, "特別號": 9, "評分": 93.2},
@@ -61,9 +60,8 @@ with tab3:
     n_power = st.slider("預測組數", 1, 10, 5, key="spower")
     if st.button("🔮 開始 威力彩 混合權重分析"):
         st.balloons()  # 🎈 祝賀氣球
-        col3, _ = st.columns([0.5, 0.5]) # 調整為 50% 寬度
+        col3, _ = st.columns([0.65, 0.35]) # 佔螢幕 65%
         with col3:
-            # 修正威力彩數據源，補足到 10 組防止顯示不足
             data_power = {
                 "n1":[2,5,8,1,9,4,7,3,6,11],
                 "n2":[15,22,24,12,23,16,25,18,21,29],
