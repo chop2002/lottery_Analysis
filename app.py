@@ -1,86 +1,87 @@
 import streamlit as st
 import pandas as pd
-import datetime
 
-# --- 頁面基本配置 ---
-st.set_page_config(
-    page_title="吉米彩卷分析系統",
-    page_icon="🎰",
-    layout="centered"  # 手機版 QR Code 掃描建議用 centered，寬度更集中
-)
+# ----------------------------------------------------------------
+# 1. 導入你的邏輯檔案 (請確保檔名正確)
+# ----------------------------------------------------------------
+try:
+    from main_649 import get_649_results  # 假設你的函數叫這個，請視情況修改
+    from main_power import get_power_results
+    # 如果 539 也是獨立檔案，請也導入：
+    # from main_539 import get_539_results
+except ImportError:
+    st.warning("部分邏輯檔案導入失敗，請檢查 main_649.py 與 main_power.py 是否在同目錄。")
 
-# --- 模擬你的後端邏輯 (請根據你實際的 engines/crawler 修改) ---
-def mock_sync_data():
-    return f"同步完成！時間：{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+# --- 頁面配置 ---
+st.set_page_config(page_title="吉米彩卷分析系統", layout="centered")
 
-def get_mock_predictions(num):
-    # 這邊模擬你截圖中的數據結構
-    data = {
-        "n1": [4] * num,
-        "n2": [6, 5, 1, 5, 2][:num],
-        "n3": [4, 8, 16, 16, 10][:num],
-        "n4": [17, 29, 29, 11, 22][:num],
-        "n5": [28, 32, 31, 28, 35][:num],
-        "n6": [36, 38, 38, 39, 40][:num]
-    }
-    return pd.DataFrame(data)
-
-# --- UI 介面開始 ---
-
+# --- 標題與簡介 ---
 st.title("🎰 吉米彩卷分析系統")
-
 st.info("朋友你好！這是我開發的分析系統，支持 539、大樂透、威力彩。")
 
-# 側邊欄：數據維護
+# --- 側邊欄：數據維護 ---
 with st.sidebar:
     st.header("數據維護")
     if st.button("🔄 同步最新獎號"):
-        with st.spinner("同步中..."):
-            # 這裡呼叫你的 crawler 邏輯
-            res = mock_sync_data()
-            st.success(res)
+        st.toast("正在同步最新數據...", icon="⏳")
+        # 這裡放置你的爬蟲或同步邏輯
+        st.success("數據同步完成！")
 
-# 主分頁標籤
+# --- 分頁標籤設定 ---
 tab1, tab2, tab3 = st.tabs(["今彩 539", "大樂透 649", "威力彩"])
 
-# --- 今彩 539 區塊 ---
+# ================================================================
+# 今彩 539
+# ================================================================
 with tab1:
     st.header("今彩 539 分析預測")
-    num_predictions = st.slider("預測組數", 1, 10, 5, key="slider_539")
-
+    n_539 = st.slider("預測組數", 1, 10, 5, key="s539")
+    
     if st.button("🔮 開始 539 混合權重分析"):
         st.subheader("預測結果表")
-        
-        # --- 核心寬度調整：減少 65% (只佔 35%) ---
-        col_table, col_empty = st.columns([0.35, 0.65])
-        
-        with col_table:
-            # 取得預測資料 (這裡換成你原本 main_539 的邏輯)
-            df_result = get_mock_predictions(num_predictions)
-            
-            # 顯示表格
-            st.dataframe(df_result, use_container_width=True)
-            
-        # col_empty 留白，讓表格看起來縮小在左側
-        # ---------------------------------------
+        col1, spacer1 = st.columns([0.35, 0.65]) # 減少 65% 寬度
+        with col1:
+            # 這裡放你的 539 數據產出邏輯
+            # df_539 = get_539_results(n_539) 
+            st.write("表格已縮減至 35% 寬度")
+            # st.dataframe(df_539, use_container_width=True)
 
-    st.write("---")
-    # 下載按鈕 (這部分通常需要結合你的 Excel 產生邏輯)
-    st.download_button(
-        label="📥 下載完整 539 報表 (Excel)",
-        data="這裡放 Excel 的 Binary 資料",
-        file_name="lottery_report_539.xlsx",
-        mime="application/vnd.ms-excel"
-    )
-
-# --- 其他分頁比照辦理 (視需要加入內容) ---
+# ================================================================
+# 大樂透 649
+# ================================================================
 with tab2:
-    st.header("大樂透 649")
-    st.write("開發中...")
+    st.header("大樂透 649 分析預測")
+    n_649 = st.slider("預測組數", 1, 10, 5, key="s649")
+    
+    if st.button("🔮 開始 649 混合權重分析"):
+        st.subheader("預測結果表")
+        col2, spacer2 = st.columns([0.35, 0.65]) # 減少 65% 寬度
+        with col2:
+            try:
+                # 呼叫你 main_649.py 裡的邏輯
+                df_649 = get_649_results(n_649) 
+                st.dataframe(df_649, use_container_width=True)
+            except NameError:
+                st.error("找不到 get_649_results 函數，請確認 import 名稱。")
 
+# ================================================================
+# 威力彩
+# ================================================================
 with tab3:
-    st.header("威力彩")
-    st.write("開發中...")
+    st.header("威力彩 分析預測")
+    n_power = st.slider("預測組數", 1, 10, 5, key="spower")
+    
+    if st.button("🔮 開始 威力彩 混合權重分析"):
+        st.subheader("預測結果表")
+        col3, spacer3 = st.columns([0.35, 0.65]) # 減少 65% 寬度
+        with col3:
+            try:
+                # 呼叫你 main_power.py 裡的邏輯
+                df_power = get_power_results(n_power)
+                st.dataframe(df_power, use_container_width=True)
+            except NameError:
+                st.error("找不到 get_power_results 函數，請確認 import 名稱。")
 
+# --- 頁尾 ---
 st.markdown("---")
 st.caption("Designed by Gemini吉米 | 僅供學術研究，博弈有風險請謹慎參與。")
